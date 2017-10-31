@@ -49,18 +49,17 @@ end
 # returns {"<start>"=>[["The", "<object>", "<verb>", "tonight."]], "<object>"=>[["waves"], ["big", "yellow", "flowers"], ["slugs"]], "<verb>"=>[["sigh", "<adverb>"], ["portend", "like", "<object>"], ["die", "<adverb>"]], "<adverb>"=>[["warily"], ["grumpily"]]}
 def to_grammar_hash(split_def_array)
   # TODO: your implementation here
-
 end
 
 # Returns true iff s is a non-terminal
 # a.k.a. a string where the first character is <
 #        and the last character is >
 def is_non_terminal?(s)
-    # TODO: your implementation here
-    if (s[0] == '<' && s[(s.length)-1] == '>')
-        return true
-    else
-        return false
+  # TODO: your implementation here
+  if (s[0] == '<' && s[(s.length)-1] == '>')
+    return true
+else
+  return false
     end
 end
 
@@ -81,21 +80,32 @@ end
 # as described above, don't have some sort of endless recursive cycle in the
 # expansion, etc.). The names of non-terminals should be considered
 # case-insensitively, <NOUN> matches <Noun> and <noun>, for example.
+
 def expand(grammar, non_term="<start>")
   # TODO: your implementation here
-  non_term="<verb>"
+  sentence = ""
   i = 0
   while i < grammar.length do
-      if (grammar.keys[i] == non_term)
-          print "Value of non-term "
-          print i
-      end
-      i += 1
+    if (grammar.keys[i] == non_term)
+      index = i
+    end
+    i += 1
+  end
+  i = 0
+  randomNum = rand(grammar[grammar.keys[index]].length)
+ # Grammar Values for index. For that value equal to random number, add each value to sentence
+  while i < grammar[grammar.keys[index]][randomNum].length do
+    if (is_non_terminal?(grammar[grammar.keys[index]][randomNum][i]) == true)
+      return sentence += expand(grammar, grammar[grammar.keys[index]][randomNum][i])
+    end
+  sentence += grammar[grammar.keys[index]][randomNum][i]
+  sentence += " "
+    i+=1
   end
   #puts grammar.length
-  #randNum = rand()
-  #puts grammar[grammar.keys[0]]
-  return "Random Sentence"
+  #puts sentence
+
+  return sentence
 end
 
 # Given the name of a grammar file,
@@ -103,14 +113,14 @@ end
 # random expansion of the grammar
 def rsg(filename)
   # TODO: your implementation here
-    puts "The filename is " + filename
-    arr = read_grammar_defs(filename)
-    splitArr = split_definition(arr)
-    #ghash = to_grammar_hash(splitArr)
-    ghash = {"<start>"=>[["The", "<object>", "<verb>", "tonight."]], "<object>"=>[["waves"], ["big", "yellow", "flowers"], ["slugs"]], "<verb>"=>[["sigh", "<adverb>"], ["portend", "like", "<object>"], ["die", "<adverb>"]], "<adverb>"=>[["warily"], ["grumpily"]]}
-    #Array of sentences? Fill array with expanded sentences?
-    sentences = expand(ghash)
-    puts sentences
+  puts "The filename is " + filename
+  arr = read_grammar_defs(filename)
+  splitArr = split_definition(arr)
+  #ghash = to_grammar_hash(splitArr)
+  ghash = {"<start>"=>[["The", "<object>", "<verb>", "tonight."]], "<object>"=>[["waves"], ["big", "yellow", "flowers"], ["slugs"]], "<verb>"=>[["sigh", "<adverb>"], ["portend", "like", "<object>"], ["die", "<adverb>"]], "<adverb>"=>[["warily"], ["grumpily"]]}
+  #Array of sentences? Fill array with expanded sentences?
+  sentences = expand(ghash)
+  puts sentences
 end
 
 if __FILE__ == $0
@@ -121,4 +131,5 @@ if __FILE__ == $0
   STDOUT.flush
   name = gets.chomp
   rsg(name)
+
 end
