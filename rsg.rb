@@ -131,15 +131,15 @@ end
 def rsg(filename)
   # TODO: your implementation here
   puts "The filename is " + filename
-  arr = read_grammar_defs(filename)
+ # arr = read_grammar_defs(filename)
+  arr = ["\n<start>\nYou <adj> <name> . ;\nMay <curse> . ;\n", "\n<start>\nYou <adj> <name> . ;\n;\n"]
   splitArr = split_definition(arr)
   #splitArr = [["<start>", "The   <object>   <verb>   tonight."], ["<object>", "waves", "big    yellow       flowers", "slugs"], ["<verb>", "sigh <adverb>", "portend like <object>", "die <adverb>"], ["<adverb>", "warily", "grumpily"]]
-  ghash = to_grammar_hash(splitArr)
+  #ghash = to_grammar_hash(splitArr)
   #ghash = {"<start>"=>[["The", "<object>", "<verb>", "tonight."]], "<object>"=>[["waves"], ["big", "yellow", "flowers"], ["slugs"]], "<verb>"=>[["sigh", "<adverb>"], ["portend", "like", "<object>"], ["die", "<adverb>"]], "<adverb>"=>[["warily"], ["grumpily"]]}
-  #Array of sentences? Fill array with expanded sentences?
-  sentences = expand(ghash)
-  #puts ghash
-  puts sentences
+  #sentences = expand(ghash)
+  print splitArr
+  #puts sentences
 end
 
 if __FILE__ == $0
