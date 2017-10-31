@@ -28,7 +28,7 @@ def split_definition(raw_def)
   #expand = expand.gsub '*', '\n'
 
   split_def = expand.split(/\s*[;*]\s* /x)
-  print split_def
+ # print split_def
   #split_def = split_def.each{ |x| arr = x.split(/[\r\n]+/)}
   #split_def = split_def.each {|x| arr = x.("\\n", " ")}
   #puts "SPLIT"
@@ -56,14 +56,13 @@ def to_grammar_hash(split_def_array)
      while j < split_def_array[i].length do
        str = split_def_array[i][j]
        values = str.split(" ")
-       print values
+       #print values
        if ghash.keys.include? split_def_array[i][0]
-         ghash[split_def_array[i][0]] << values
+         ghash[split_def_array[i][0]].push(values)
        else
-       ghash[split_def_array[i][0]] = values
+       ghash[split_def_array[i][0]] = [values]
        end
       j += 1
-       puts " "
      end
      i += 1
      j = 1
@@ -135,12 +134,12 @@ def rsg(filename)
   arr = read_grammar_defs(filename)
   splitArr = split_definition(arr)
   #splitArr = [["<start>", "The   <object>   <verb>   tonight."], ["<object>", "waves", "big    yellow       flowers", "slugs"], ["<verb>", "sigh <adverb>", "portend like <object>", "die <adverb>"], ["<adverb>", "warily", "grumpily"]]
-  #ghash = to_grammar_hash(splitArr)
+  ghash = to_grammar_hash(splitArr)
   #ghash = {"<start>"=>[["The", "<object>", "<verb>", "tonight."]], "<object>"=>[["waves"], ["big", "yellow", "flowers"], ["slugs"]], "<verb>"=>[["sigh", "<adverb>"], ["portend", "like", "<object>"], ["die", "<adverb>"]], "<adverb>"=>[["warily"], ["grumpily"]]}
   #Array of sentences? Fill array with expanded sentences?
-  #sentences = expand(ghash)
-  #print ghash
-  #puts sentences
+  sentences = expand(ghash)
+  #puts ghash
+  puts sentences
 end
 
 if __FILE__ == $0
