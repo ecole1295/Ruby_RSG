@@ -48,21 +48,24 @@ end
 def to_grammar_hash(split_def_array)
   # TODO: your implementation here
    ghash = Hash.new
+   values = Array.new
    i = 0
    j = 1
-   #Probably easier here to create an array that holds the values in it and then
-   #assign that array to the hash key and then repeat by replacing all values in array
    while i < split_def_array.length do
      while j < split_def_array[i].length do
-     if  j == 1
-      ghash[split_def_array[i][0]] = split_def_array[i][j]
-     else
-       ghash.store(split_def_array[i][0], split_def_array[i][j])
-     end
+       str = split_def_array[i][j]
+       values = str.split(" ")
+       print values
+       if ghash.keys.include? split_def_array[i][0]
+         ghash[split_def_array[i][0]] << values
+       else
+       ghash[split_def_array[i][0]] = values
+       end
       j += 1
+       puts " "
      end
-     #puts split_def_array[i].length
      i += 1
+     j = 1
    end
   return ghash
 end
