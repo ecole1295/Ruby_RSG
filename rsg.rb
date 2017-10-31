@@ -26,14 +26,12 @@ def split_definition(raw_def)
   expand = expand.gsub /\n/, '*'
   expand = expand.gsub /\s+/, ' '
   #expand = expand.gsub '*', '\n'
-  puts "EXPAND"
-  print expand
-  puts "Resulting array  "
+
   split_def = expand.split(/\s*[;*]\s* /x)
   #split_def = split_def.each{ |x| arr = x.split(/[\r\n]+/)}
   #split_def = split_def.each {|x| arr = x.("\\n", " ")}
-  puts "SPLIT"
-  print split_def
+  #puts "SPLIT"
+ # print split_def
   #rsg(split_def)
 
 end
@@ -93,18 +91,16 @@ def expand(grammar, non_term="<start>")
   end
   i = 0
   randomNum = rand(grammar[grammar.keys[index]].length)
- # Grammar Values for index. For that value equal to random number, add each value to sentence
   while i < grammar[grammar.keys[index]][randomNum].length do
     if (is_non_terminal?(grammar[grammar.keys[index]][randomNum][i]) == true)
-      return sentence += expand(grammar, grammar[grammar.keys[index]][randomNum][i])
+      sentence += " "
+      value =  expand(grammar, grammar[grammar.keys[index]][randomNum][i])
+      sentence += value
+      else
+       sentence += grammar[grammar.keys[index]][randomNum][i] + " "
     end
-  sentence += grammar[grammar.keys[index]][randomNum][i]
-  sentence += " "
     i+=1
   end
-  #puts grammar.length
-  #puts sentence
-
   return sentence
 end
 
