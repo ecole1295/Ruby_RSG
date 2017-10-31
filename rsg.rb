@@ -47,6 +47,19 @@ end
 # returns {"<start>"=>[["The", "<object>", "<verb>", "tonight."]], "<object>"=>[["waves"], ["big", "yellow", "flowers"], ["slugs"]], "<verb>"=>[["sigh", "<adverb>"], ["portend", "like", "<object>"], ["die", "<adverb>"]], "<adverb>"=>[["warily"], ["grumpily"]]}
 def to_grammar_hash(split_def_array)
   # TODO: your implementation here
+   ghash = Hash.new
+   i = 0
+   j = 1
+   while i < split_def_array.length do
+     while j < split_def_array[i].length do
+     #if (is_non_terminal?(split_def_array[i][0]) == true)
+     ghash[split_def_array[i][0]] = split_def_array[i][j]
+      j += 1
+     end
+     #puts split_def_array[i].length
+     i += 1
+   end
+  return ghash
 end
 
 # Returns true iff s is a non-terminal
@@ -111,12 +124,13 @@ def rsg(filename)
   # TODO: your implementation here
   puts "The filename is " + filename
   arr = read_grammar_defs(filename)
-  splitArr = split_definition(arr)
-  #ghash = to_grammar_hash(splitArr)
-  ghash = {"<start>"=>[["The", "<object>", "<verb>", "tonight."]], "<object>"=>[["waves"], ["big", "yellow", "flowers"], ["slugs"]], "<verb>"=>[["sigh", "<adverb>"], ["portend", "like", "<object>"], ["die", "<adverb>"]], "<adverb>"=>[["warily"], ["grumpily"]]}
+  #splitArr = split_definition(arr)
+  splitArr = [["<start>", "The   <object>   <verb>   tonight."], ["<object>", "waves", "big    yellow       flowers", "slugs"], ["<verb>", "sigh <adverb>", "portend like <object>", "die <adverb>"], ["<adverb>", "warily", "grumpily"]]
+  ghash = to_grammar_hash(splitArr)
+  #ghash = {"<start>"=>[["The", "<object>", "<verb>", "tonight."]], "<object>"=>[["waves"], ["big", "yellow", "flowers"], ["slugs"]], "<verb>"=>[["sigh", "<adverb>"], ["portend", "like", "<object>"], ["die", "<adverb>"]], "<adverb>"=>[["warily"], ["grumpily"]]}
   #Array of sentences? Fill array with expanded sentences?
-  sentences = expand(ghash)
-  puts sentences
+ # sentences = expand(ghash)
+  puts ghash
 end
 
 if __FILE__ == $0
