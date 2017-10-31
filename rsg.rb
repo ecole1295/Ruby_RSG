@@ -50,10 +50,15 @@ def to_grammar_hash(split_def_array)
    ghash = Hash.new
    i = 0
    j = 1
+   #Probably easier here to create an array that holds the values in it and then
+   #assign that array to the hash key and then repeat by replacing all values in array
    while i < split_def_array.length do
      while j < split_def_array[i].length do
-     #if (is_non_terminal?(split_def_array[i][0]) == true)
-     ghash[split_def_array[i][0]] = split_def_array[i][j]
+     if  j == 1
+      ghash[split_def_array[i][0]] = split_def_array[i][j]
+     else
+       ghash.store(split_def_array[i][0], split_def_array[i][j])
+     end
       j += 1
      end
      #puts split_def_array[i].length
