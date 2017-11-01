@@ -1,3 +1,6 @@
+# Rebecca Johnson & Ethan Cole:     Ruby rsg.rb
+
+
 # Extracts just the definitions from the grammar file
 # Returns an array of strings where each string is the lines for
 # a given definition (without the braces)
@@ -21,17 +24,10 @@ end
 #   split_definition "\n<start>\nYou <adj> <name> . ;\n;\n"
 #     returns ["<start>", "You <adj> <name> .", ""]
 def split_definition(raw_def)
-    # TODO: your implementation here
-    expand = raw_def.map { |s| "#{s}"}.join
-    expand = expand.gsub /{\n}+/, '*'
-    split_def = expand.split(/\s*[;,\n]\s* /x)
-    split_def.shift
-    #print split_def
-    split_def = split_def.slice_before {|x| is_non_terminal?(x) == true}.to_a
-
-    #print split_def
-    return split_def
-
+    split_arr = raw_def.map{|x| x.sub(/>/, '>;')}       # substitute > for >; for easy split
+    split_arr = split_arr.map{|x| x.strip}              # strip excess whitespace
+    split_arr = split_arr.map{|x| x.split(/;/)}         # split based on semicolon
+    split_arr = split_arr.map{|x| x.map{|x| x.strip}}
 end
 
 # Takes an array of definitions where the definitions have been
@@ -44,7 +40,6 @@ end
 # to_grammar_hash([["<start>", "The   <object>   <verb>   tonight."], ["<object>", "waves", "big    yellow       flowers", "slugs"], ["<verb>", "sigh <adverb>", "portend like <object>", "die <adverb>"], ["<adverb>", "warily", "grumpily"]])
 # returns {"<start>"=>[["The", "<object>", "<verb>", "tonight."]], "<object>"=>[["waves"], ["big", "yellow", "flowers"], ["slugs"]], "<verb>"=>[["sigh", "<adverb>"], ["portend", "like", "<object>"], ["die", "<adverb>"]], "<adverb>"=>[["warily"], ["grumpily"]]}
 def to_grammar_hash(split_def_array)
-    # TODO: your implementation here
     ghash = Hash.new
     values = Array.new
     i = 0
@@ -64,6 +59,7 @@ def to_grammar_hash(split_def_array)
         i += 1
         j = 1
     end
+
     return ghash
 end
 
@@ -71,8 +67,7 @@ end
 # a.k.a. a string where the first character is <
 #        and the last character is >
 def is_non_terminal?(s)
-    # TODO: your implementation here
-    if (s[0] == '<' && s[(s.length)-1] == '>')
+    if (s.start_with?("<") and s.end_with?(">"))
         return true
     else
         return false
@@ -96,29 +91,13 @@ end
 # as described above, don't have some sort of endless recursive cycle in the
 # expansion, etc.). The names of non-terminals should be considered
 # case-insensitively, <NOUN> matches <Noun> and <noun>, for example.
-
 def expand(grammar, non_term="<start>")
-    # TODO: your implementation here
     sentence = ""
-    i = 0
-    while i < grammar.length do
-        if (grammar.keys[i] == non_term)
-            index = i
-        end
-        i += 1
-    end
-    i = 0
-    randomNum = rand(grammar[grammar.keys[index]].length)
-    while i < grammar[grammar.keys[index]][randomNum].length do
-        if (is_non_terminal?(grammar[grammar.keys[index]][randomNum][i]) == true)
-            sentence += " "
-            value =  expand(grammar, grammar[grammar.keys[index]][randomNum][i])
-            sentence += value
-        else
-            sentence += grammar[grammar.keys[index]][randomNum][i] + " "
-        end
-        i+=1
-    end
+    grammar[non_term].sample.each{|x|
+        if is_non_terminal?(x)
+            sentence += expand(grammar, x)
+        else sentence += x + " " end
+    }
     return sentence
 end
 
@@ -126,25 +105,16 @@ end
 # read the grammar file and print a
 # random expansion of the grammar
 def rsg(filename)
-    # TODO: your implementation here
-    puts "The filename is " + filename
     arr = read_grammar_defs(filename)
-    puts arr
     splitArr = split_definition(arr)
-    puts splitArr
     ghash = to_grammar_hash(splitArr)
-    puts ghash
-    sentences = expand(ghash)
+    sentences = expand(ghash).gsub(/ (?=\.|,|'s |:|\)|\?|!|s )| (?<=\( )/, '').strip
     puts sentences
 end
 
 if __FILE__ == $0
-    # TODO: your implementation of the following
-    # prompt the user for the name of a grammar file
-    # rsg that file
     puts "What is the name of the grammar file?"
     STDOUT.flush
     name = gets.chomp
     rsg(name)
-
 end
