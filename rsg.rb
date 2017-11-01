@@ -2,12 +2,12 @@
 # Returns an array of strings where each string is the lines for
 # a given definition (without the braces)
 def read_grammar_defs(filename)
-  filename = 'grammars/' + filename unless filename.start_with? 'grammars/'
-  filename += '.g' unless filename.end_with? '.g'
-  contents = open(filename, 'r') { |f| f.read }
-  contents.scan(/\{(.+?)\}/m).map do |rule_array|
-    rule_array[0]
-  end
+    filename = 'grammars/' + filename unless filename.start_with? 'grammars/'
+    filename += '.g' unless filename.end_with? '.g'
+    contents = open(filename, 'r') { |f| f.read }
+    contents.scan(/\{(.+?)\}/m).map do |rule_array|
+        rule_array[0]
+    end
 end
 
 # Takes data as returned by read_grammar_defs and reformats it
@@ -21,19 +21,16 @@ end
 #   split_definition "\n<start>\nYou <adj> <name> . ;\n;\n"
 #     returns ["<start>", "You <adj> <name> .", ""]
 def split_definition(raw_def)
-  # TODO: your implementation here
-  expand = raw_def.map { |s| "#{s}"}.join
-  expand = expand.gsub /\n/, '*'
-  expand = expand.gsub /\s+/, ' '
-  #expand = expand.gsub '*', '\n'
+    # TODO: your implementation here
+    expand = raw_def.map { |s| "#{s}"}.join
+    expand = expand.gsub /{\n}+/, '*'
+    split_def = expand.split(/\s*[;,\n]\s* /x)
+    split_def.shift
+    #print split_def
+    split_def = split_def.slice_before {|x| is_non_terminal?(x) == true}.to_a
 
-  split_def = expand.split(/\s*[;*]\s* /x)
- # print split_def
-  #split_def = split_def.each{ |x| arr = x.split(/[\r\n]+/)}
-  #split_def = split_def.each {|x| arr = x.("\\n", " ")}
-  #puts "SPLIT"
- # print split_def
-  #rsg(split_def)
+    #print split_def
+    return split_def
 
 end
 
@@ -47,38 +44,38 @@ end
 # to_grammar_hash([["<start>", "The   <object>   <verb>   tonight."], ["<object>", "waves", "big    yellow       flowers", "slugs"], ["<verb>", "sigh <adverb>", "portend like <object>", "die <adverb>"], ["<adverb>", "warily", "grumpily"]])
 # returns {"<start>"=>[["The", "<object>", "<verb>", "tonight."]], "<object>"=>[["waves"], ["big", "yellow", "flowers"], ["slugs"]], "<verb>"=>[["sigh", "<adverb>"], ["portend", "like", "<object>"], ["die", "<adverb>"]], "<adverb>"=>[["warily"], ["grumpily"]]}
 def to_grammar_hash(split_def_array)
-  # TODO: your implementation here
-   ghash = Hash.new
-   values = Array.new
-   i = 0
-   j = 1
-   while i < split_def_array.length do
-     while j < split_def_array[i].length do
-       str = split_def_array[i][j]
-       values = str.split(" ")
-       #print values
-       if ghash.keys.include? split_def_array[i][0]
-         ghash[split_def_array[i][0]].push(values)
-       else
-       ghash[split_def_array[i][0]] = [values]
-       end
-      j += 1
-     end
-     i += 1
-     j = 1
-   end
-  return ghash
+    # TODO: your implementation here
+    ghash = Hash.new
+    values = Array.new
+    i = 0
+    j = 1
+    while i < split_def_array.length do
+        while j < split_def_array[i].length do
+            str = split_def_array[i][j]
+            values = str.split(" ")
+            #print values
+            if ghash.keys.include? split_def_array[i][0]
+                ghash[split_def_array[i][0]].push(values)
+            else
+                ghash[split_def_array[i][0]] = [values]
+            end
+            j += 1
+        end
+        i += 1
+        j = 1
+    end
+    return ghash
 end
 
 # Returns true iff s is a non-terminal
 # a.k.a. a string where the first character is <
 #        and the last character is >
 def is_non_terminal?(s)
-  # TODO: your implementation here
-  if (s[0] == '<' && s[(s.length)-1] == '>')
-    return true
-else
-  return false
+    # TODO: your implementation here
+    if (s[0] == '<' && s[(s.length)-1] == '>')
+        return true
+    else
+        return false
     end
 end
 
@@ -101,54 +98,53 @@ end
 # case-insensitively, <NOUN> matches <Noun> and <noun>, for example.
 
 def expand(grammar, non_term="<start>")
-  # TODO: your implementation here
-  sentence = ""
-  i = 0
-  while i < grammar.length do
-    if (grammar.keys[i] == non_term)
-      index = i
+    # TODO: your implementation here
+    sentence = ""
+    i = 0
+    while i < grammar.length do
+        if (grammar.keys[i] == non_term)
+            index = i
+        end
+        i += 1
     end
-    i += 1
-  end
-  i = 0
-  randomNum = rand(grammar[grammar.keys[index]].length)
-  while i < grammar[grammar.keys[index]][randomNum].length do
-    if (is_non_terminal?(grammar[grammar.keys[index]][randomNum][i]) == true)
-      sentence += " "
-      value =  expand(grammar, grammar[grammar.keys[index]][randomNum][i])
-      sentence += value
-      else
-       sentence += grammar[grammar.keys[index]][randomNum][i] + " "
+    i = 0
+    randomNum = rand(grammar[grammar.keys[index]].length)
+    while i < grammar[grammar.keys[index]][randomNum].length do
+        if (is_non_terminal?(grammar[grammar.keys[index]][randomNum][i]) == true)
+            sentence += " "
+            value =  expand(grammar, grammar[grammar.keys[index]][randomNum][i])
+            sentence += value
+        else
+            sentence += grammar[grammar.keys[index]][randomNum][i] + " "
+        end
+        i+=1
     end
-    i+=1
-  end
-  return sentence
+    return sentence
 end
 
 # Given the name of a grammar file,
 # read the grammar file and print a
 # random expansion of the grammar
 def rsg(filename)
-  # TODO: your implementation here
-  puts "The filename is " + filename
- # arr = read_grammar_defs(filename)
-  arr = ["\n<start>\nYou <adj> <name> . ;\nMay <curse> . ;\n", "\n<start>\nYou <adj> <name> . ;\n;\n"]
-  splitArr = split_definition(arr)
-  #splitArr = [["<start>", "The   <object>   <verb>   tonight."], ["<object>", "waves", "big    yellow       flowers", "slugs"], ["<verb>", "sigh <adverb>", "portend like <object>", "die <adverb>"], ["<adverb>", "warily", "grumpily"]]
-  #ghash = to_grammar_hash(splitArr)
-  #ghash = {"<start>"=>[["The", "<object>", "<verb>", "tonight."]], "<object>"=>[["waves"], ["big", "yellow", "flowers"], ["slugs"]], "<verb>"=>[["sigh", "<adverb>"], ["portend", "like", "<object>"], ["die", "<adverb>"]], "<adverb>"=>[["warily"], ["grumpily"]]}
-  #sentences = expand(ghash)
-  print splitArr
-  #puts sentences
+    # TODO: your implementation here
+    puts "The filename is " + filename
+    arr = read_grammar_defs(filename)
+    puts arr
+    splitArr = split_definition(arr)
+    puts splitArr
+    ghash = to_grammar_hash(splitArr)
+    puts ghash
+    sentences = expand(ghash)
+    puts sentences
 end
 
 if __FILE__ == $0
-  # TODO: your implementation of the following
-  # prompt the user for the name of a grammar file
-  # rsg that file
-  puts "What is the name of the grammar file?"
-  STDOUT.flush
-  name = gets.chomp
-  rsg(name)
+    # TODO: your implementation of the following
+    # prompt the user for the name of a grammar file
+    # rsg that file
+    puts "What is the name of the grammar file?"
+    STDOUT.flush
+    name = gets.chomp
+    rsg(name)
 
 end
